@@ -21,40 +21,67 @@ myApp.config(function ($routeProvider) {
     
 });
 
-myApp.service('nameService', function() {
-   
-    var self = this;
-    this.name = 'John Doe';
+myApp.controller('mainController', ['$scope', '$log', function($scope, $log) {
     
-    this.namelength = function() {
+    $scope.people = [
+        {
+        name: 'John Doe',
+        address: '555 Main St.',
+        city: 'New York',
+        state: 'NY',
+        zip: '11111'
+        },
+        {
+        name: 'Jane Doe',
+        address: '333 Second St.',
+        city: 'Buffalo',
+        state: 'NY',
+        zip: '22222'
+        },
+        {
+        name: 'George Doe',
+        address: '111 Third St.',
+        city: 'Miami',
+        state: 'FL',
+        zip: '33333'
+        }
+    ]
+    
+    $scope.formattedAddress = function(person) {
       
-        return self.name.length;
+        return person.address + ', ' + person.city + ', ' + person.state + ' ' + person.zip;
         
     };
     
+}]);
+
+myApp.controller('secondController', ['$scope', '$log', '$routeParams', function($scope, $log, $routeParams) {
+    
+    
+    
+}]);
+
+myApp.directive("searchResult", function() {
+   return {
+       restrict: 'AECM',
+       templateUrl: 'directive/searchResult.htm',
+       replace: true,
+       scope: {
+           personObject: "=",
+           formattedAddressFunction: "&"
+       },
+       link: function(scope, elements, attrs) {
+                   
+           console.log('Linking...');
+
+           console.log(scope);
+
+           if (scope.personObject.name == 'Jane Doe') {
+                elements.removeAttr('class');
+           }
+
+           console.log(elements);
+                   
+        }           
+   }
 });
-
-myApp.controller('mainController', ['$scope', '$log', 'nameService', function($scope, $log, nameService) {
-    
-    $scope.name = nameService.name;
-    
-    $scope.$watch('name', function() {
-        nameService.name = $scope.name;
-    });
-    
-    $log.log(nameService.name);
-    $log.log(nameService.namelength());
-    
-}]);
-
-myApp.controller('secondController', ['$scope', '$log', '$routeParams', 'nameService', function($scope, $log, $routeParams, nameService) {
-    
-    $scope.num = $routeParams.num || 1;
-    
-    $scope.name = nameService.name;
-    
-    $scope.$watch('name', function() {
-        nameService.name = $scope.name;
-    });
-    
-}]);
